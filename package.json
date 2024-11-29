@@ -1,16 +1,22 @@
 {
   "name": "sockettalk",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.3",
-    "socket.io": "^4.4.1"
+    "nodemon": "^3.1.7",
+    "socket.io": "^4.4.1",
+    "vite": "^6.0.1"
   }
 }

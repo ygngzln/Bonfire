@@ -1,11 +1,16 @@
-const express = require('express')
+import express from 'express';
 const app = express()
-const path = require("path")
-const server = require('http').createServer(app)
+import path from 'path'
+import {dirname} from 'path'
+import {createServer} from 'http'
+import { fileURLToPath } from 'url';
+const server = createServer(app)
 
 const port = process.env.PORT || 3000;
 
-const io = require('socket.io')(server);
+import {Server} from 'socket.io' 
+
+const io = new Server(server)
 
 var msgindex = {
   messages: [],
@@ -15,6 +20,9 @@ var msgindex = {
 
 var idusers = {}
 var onlineusers = {}
+
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 server.listen(port, () => {
   console.log('Server listening at port %d', port);
@@ -27,16 +35,16 @@ app.get('/', (req, res) => {
 });
 
 function sortOnline(){
-  abclist = []
+  var abclist = []
   for(var id in onlineusers){
     abclist.push([onlineusers[id].user, id])
   }
   abclist.sort((a,b) => a[0].localeCompare(b[0]));
-  onlineusers = {}
-  for(x=0;x<abclist.length;x++){
-    user = abclist[x][0]
-    id = abclist[x][1]
-    data = {}
+  var onlineusers = {}
+  for(let x=0;x<abclist.length;x++){
+    var user = abclist[x][0]
+    var id = abclist[x][1]
+    var data = {}
     data["user"] = user
     onlineusers[id] = data
   }
@@ -46,11 +54,11 @@ io.on('connection', (socket) => {
   io.sockets.emit('UpdateApp', msgindex)
 
   socket.on('EnteredIndex', (id, user) => {
-    data = {}
+    var data = {}
     data["user"] = user
     idusers[id] = data
     onlineusers[id] = data
-    message = `${user} has entered chat`
+    var message = `${user} has entered chat`
     msgindex.messages.push([message, {}])
     msgindex.sender.push("j")
     msgindex.tag.push("none")
@@ -73,8 +81,8 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     if(idusers[socket.id] && idusers && onlineusers[socket.id]){
       delete onlineusers[socket.id]
-      user = idusers[socket.id].user
-      message = `${user} has left chat`
+      var user = idusers[socket.id].user
+      var message = `${user} has left chat`
       msgindex.messages.push([message, {}])
       msgindex.sender.push("e")
       msgindex.tag.push("none")

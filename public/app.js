@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io(); 
 var sendButton = document.getElementById("sendButton")
 var textbox = document.getElementById("textbox")
 var textcontent = document.getElementById("textdiv")
@@ -56,7 +56,7 @@ onlineouter.style.visibility = "hidden";
 usererr.style.visibility = "hidden";
 
 window.addEventListener("keydown", function(e){
-  if(e.keyCode == 8){
+  if(e.key == "Backspace"){
     if(textbox.value == 0){
       if(currentReply && Object.keys(currentReply).length > 0){
         clearReply()
@@ -112,7 +112,7 @@ window.addEventListener("click", function(e){
   }
 })
 
-for(i=0;i<emojiList.length;i++){
+for(let i=0;i<emojiList.length;i++){
   emojiList[i].addEventListener("click", function(e){
     emojiSelect(e.target.innerHTML)
   })
@@ -153,7 +153,7 @@ function checkuser(n){
     errorMessage("Username too long (max 28 characters).")
     return (false)
   }
-  for(x=0;x<n.length;x++){
+  for(let x=0;x<n.length;x++){
     if(n[x] === " "){
       errorMessage("You cannot have spaces in username (symbols are allowed).")
       return (false);
@@ -192,7 +192,7 @@ function updatePrev(){
     sdlist = msgapp.sender
     tglist = msgapp.tag
     talking = "";
-    for(x=0;x<msglist.length;x++){
+    for(let x=0;x<msglist.length;x++){
       usermsg = true
       newDiv = undefined;
       userid = sdlist[x]
@@ -352,7 +352,7 @@ function drawOnlineName(user){
 
 function drawEntry(msg){
   newImg = document.createElement("img")
-  newImg.src = "enter.png"
+  newImg.src = "assets/enter.png"
   newImg.style.backgroundColor = "green"
   newImg.style.border = "4px solid green"
   newImg.style.verticalAlign = "middle"
@@ -377,7 +377,7 @@ function drawEntry(msg){
 
 function drawExit(msg){
   newImg = document.createElement("img")
-  newImg.src = "exit.png"
+  newImg.src = "assets/exit.png"
   newImg.style.backgroundColor = "red"
   newImg.style.border = "4px solid red"
   newImg.style.verticalAlign = "middle"
@@ -458,7 +458,7 @@ function tagOptions(msg){
   if(i == -1){
     tagText = {}
   }
-  for(x=0;x<msg.length;x++){
+  for(let x=0;x<msg.length;x++){
     if(tag){
       if(msg[x] === " "){
         name = ""
@@ -469,7 +469,7 @@ function tagOptions(msg){
       if(msg[x] === "@"){
         index = x
         name = ""
-        for(y=x+1;y<msg.length;y++){
+        for(let y=x+1;y<msg.length;y++){
           if(msg[y] === " "){
             break;
           }else{
@@ -543,7 +543,7 @@ function redrawTabs(){
   tempTablistIndex = tabListIndex
   tempTablistID = tabListID
   clearTabs()
-  for(x=0;x<tabList.length;x++){
+  for(let x=0;x<tabList.length;x++){
     drawTab(`@${tempTablist[x]}`, tempTablistIndex[x], tempTablistID[x])
   }
 }

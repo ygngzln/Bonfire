@@ -10,3 +10,8 @@
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+.gitignore
+
+node_modules
+node_modules/*
