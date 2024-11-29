@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="bonfire">
+  <meta name="description" content="bonfire">
+  <title>Bonfire</title>
+  <link rel="icon" type="image/png" href="bonfireimg.png">
+</head>
+  
+<body>
+  <div id="logo">
+  <div id="bonfire"><img src="bonfire.gif" alt="image can't load" width="45" height="40"><img src="bonfirelogo.png" alt="image can't load" width="90" height="30" style="margin-left: 10px;"></div>
+  </div>
+  <div id="log">
+    <span id="wel">Welcome to Bonfire Chat</span>
+    <input type="text" id="user" placeholder="Enter a username" autocomplete="off">
+    <button id="start" onclick="start()">Enter Chat</button>
+    <span id="usererr"></span>
+  </div>
+  
+  <div id="textdiv"></div>
+  
+  <button id="replyBtn" onmouseover="overReply()" onmouseout="outReply()" onclick="replyPressed()">Reply</button>
+
+  <div id="onlineouter">Users Online:<div id="online"></div></div>
+  
+  <div id="tags"></div>
+  <div id="outerreply"><span id="replySender"></span><span id="reply"></span></div>
+  <div id="emojis"><input id="emojiSearch" placeholder="Search for emojis"></input><div class="emojiRow"><span class="emoji">🙂</span><span class="emoji">🙁</span><span class="emoji">😑</span></div></div>
+  
+  <div id="typeouter">
+  <div id="type">
+  <input type="text" id="textbox" placeholder="Type a message" autocomplete="off"></div>
+  <div id="button">
+  <button id="emojisBtn" class="sendButton" onclick="showEmojis()">Emojis</button>
+  <button id="sendButton" class="sendButton" onclick="send()">Send</button>
+  </div>
+  </div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/app.js"></script>
+
+<style>
+  body::after {
+    content: "";
+    background-image: repeating-linear-gradient(to right bottom, #386d05 10%, #182f03 15%);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+  }
+  
+  *:focus {
+    outline: none;
+  }
+  
+  @keyframes start {
+    from {
+      left: 100%;
+    }
+
+    to {
+      left: 50%;
+    }
+  }
+  
+  #logo {
+    position: absolute;
+    left: 50%;
+    top: 3.2%;
+    width: 100%;
+    border-bottom: 1px solid gray;
+    background-color: lightgray;
+    transform: translate(-50%, -50%);
+    display: inline-block;
+    font-size: 30px;
+    animation-duration: 1.6s;
+    animation-name: start;
+  }
+
+  #bonfire {
+    border: 4px solid lightgray;
+    margin: 0.2% 1%;
+    padding: 2px 2px 0 2px;
+    font: Roboto, sans-serif;
+    display: flex;
+    align-items: center;
+  }
+  
+  #log {
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 50%;
+    border: 20px outset darkgray;
+    background-color: gray;
+    animation-duration: 1.6s;
+    animation-name: start;
+  }
+
+  #wel {
+    margin-bottom: 60px;
+    color: lightgray;
+    font-size: 50px;
+    font-weight: bold;
+  }
+
+  #user {
+    margin-top: 10px;
+    border: 4px solid darkgray;
+    border-radius: 8px;
+    background-color: lightgray;
+    color: gray;
+    font-weight: bold;
+  }
+
+  #usererr {
+    color: darkred;
+    font-weight: 750;
+    margin-top: 8px;
+  }
+
+  #user::placeholder {
+    color: gray;
+    font-weight: bold;
+  }
+
+  #start {
+    margin-top: 10px;
+    border: 2px solid rgb(100,100,100);
+    background-color: darkgray;
+    color: gray;
+  }
+
+  #start:hover {
+    background-color: gray;
+    color: lightgray;
+    cursor: pointer;
+  }
+  
+  #textdiv {
+    position: absolute;
+    display: flex;
+    height: 72vh;
+    width: 50%;
+    bottom: -18.4%;
+    left: 52.15%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(152,152,152);
+    overflow-y: auto;
+    flex-direction: column;
+    crollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  #textdiv::-webkit-scrollbar {
+    display: none;
+  }
+
+  #onlineouter {
+    position: absolute;
+    height: 72vh;
+    width: 20%;
+    bottom: -18.4%;
+    left: 87.4%;
+    border-left: 8px solid dimgray;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background-color: gray;
+    color: lightgray;
+    font-size: 28px;
+    text-decoration: underline;
+    overflow-y: auto;
+  }
+
+  #tags {
+    position: absolute;
+    height: 12%;
+    width: 49.9%;
+    bottom: 12.92%;
+    left: 52.15%;
+    transform: translateX(-50%);
+    background-color: silver;
+  }
+
+  #outerreply {
+    position: absolute;
+    height: 2.85%;
+    width: 49.9%;
+    bottom: 17.35%;
+    left: 52.15%;
+    transform: translateX(-50%);
+    background-color: silver;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  #emojis {
+    position: absolute;
+    height: 32%;
+    width: 17%;
+    bottom: 17.45%;
+    left: 59.85%;
+    trasnform: translateX(-50%);
+    background-color: gray;
+    border-right: 2px solid black;
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+  }
+
+  .emojiRow {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .emoji {
+    border-radius: 8px;
+    font-size: 24px;
+    padding: 1px;
+  }
+
+  .emoji:hover {
+    background-color: lightgray;
+    border: 1px solid darkgray;
+    cursor: pointer;
+  }
+
+  #emojiSearch {
+    position: absolute;
+    background-color: gainsboro;
+    transform: translateX(-50%);
+    left: 50%;
+    border: 2px solid dimgray;
+    color: dimgray;
+    font-weight: bold;
+  }
+
+  #emojiSearch::placeholder {
+    font-weight: bold;
+  }
+
+  #outerreply::-webkit-scrollbar {
+    display: none;
+  }
+
+  #replySender {
+    font-weight: bold;
+  }
+
+  #replyBtn {
+    position:absolute;
+    background-color: silver;
+    border: 2px solid gray;
+    border-radius: 4px;
+    color: rgb(144,144,144);
+    font-weight: bold;
+    font-size: 14px;
+    width: 55px;
+    z-index: 2;
+  }
+
+  #replyBtn:hover{
+    background-color: gainsboro;
+    cursor: pointer;
+  }
+  
+  #typeouter {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    left: 52.15%;
+    bottom: 10.35%;
+    height: 7%;
+    width: 49.9%;
+    transform: translateX(-50%);
+    background-color: rgb(224,224,224);
+    border: 1px solid dimgray;
+  }
+
+  #type {
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+    height: 100%;
+    width: 84%;
+    border-radius: 24px;
+    white-space: initial;
+  }
+
+  #button {
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+    height: 100%;
+    width: 16%;
+  }
+
+  #textbox {
+    margin-right: 2px;
+    width: 100%;
+    height: 100%;
+    background: none;
+    border: none;
+    color: black;
+    font-weight: bold;
+  }
+
+  #textbox::placeholder{
+    margin-left: 4px;
+    font-weight: bold;
+    color: black;
+  }
+
+  #texthold {
+    color: rgb(170,170,170);
+    font-weight: bold;
+    font-family: Roboto,sans-serif
+  }
+
+  #emojisBtn {
+    height: 75%;
+    width: 46%;
+  }
+
+  #sendButton {
+    height: 75%;
+    width: 50%;
+    margin-right: 5%;
+    margin-left: 4%;
+  }
+
+  .sendButton {
+    text-align: center;
+    background-color: rgb(185,185,185);
+    border: 2px solid rgb(152,152,152);
+    border-radius: 4px;
+    color: rgb(100, 100, 100);
+    opacity: 1;
+  }
+
+  .sendButton:hover {
+    opacity: 0.69420;
+    cursor: pointer;
+  }
+</style>
